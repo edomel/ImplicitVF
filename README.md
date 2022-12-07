@@ -6,5 +6,5 @@
 
 The code for reproducing the work will be released in the upcoming months.
 
-Example reconstructions with the proposed method can be seen inside [meshes](meshes/)
+Example reconstructions with the proposed method can be seen inside [meshes](meshes/).
 
