@@ -20,7 +20,6 @@ import implicit_vf.workspace as ws
 
 
 def append_data_source_map(data_dir, name, source):
-
     data_source_map_filename = ws.get_data_source_map_filename(data_dir)
 
     print("data sources stored to " + data_source_map_filename)
@@ -45,7 +44,7 @@ def append_data_source_map(data_dir, name, source):
             json.dump(data_source_map, f, indent=2)
 
 
-class StandardSampling(Dataset):
+class VFSampling(Dataset):
     def __init__(
         self,
         args,
@@ -105,7 +104,6 @@ class StandardSampling(Dataset):
                 os.mkdir(target_dir)
 
             for instance_dir in instance_dirs:
-
                 shape_dir = os.path.join(class_path, instance_dir)
 
                 processed_filepath = os.path.join(target_dir, instance_dir + extension)
@@ -137,7 +135,6 @@ class StandardSampling(Dataset):
         return len(self.mesh_targets)
 
     def __getitem__(self, index):
-
         (mesh_name, target_path) = self.mesh_targets[index]
         scene = trimesh.load(mesh_name)
         source_mesh = implicit_vf.utils.as_mesh(scene)
@@ -157,7 +154,6 @@ class StandardSampling(Dataset):
         return mesh_name
 
     def center_and_normalize_mesh(self, mesh_vertices):
-
         buffer = 1.03
 
         v_min = np.min(mesh_vertices, axis=0)
@@ -171,7 +167,6 @@ class StandardSampling(Dataset):
         return mesh_vertices
 
     def sample_points(self, source_mesh):
-
         # Uniformely sample unit sphere
         phi = np.random.uniform(0.0, 2.0 * np.pi, self.n_sphere_points)
         costheta = np.random.uniform(-1.0, 1.0, self.n_sphere_points)
@@ -204,7 +199,6 @@ class StandardSampling(Dataset):
         return np.concatenate((sphere_samples, perturbed_surface_samples), axis=0)
 
     def extract_vf_udf(self, source_mesh, points):
-
         surface_dist, _, closest_points = igl.signed_distance(
             points, source_mesh.vertices, source_mesh.faces
         )
@@ -214,7 +208,6 @@ class StandardSampling(Dataset):
         return np.concatenate((vf, np.expand_dims(udf, axis=1)), axis=1)
 
     def group_points_by_vf_and_save(self, points_with_vf, out_file):
-
         first_set = points_with_vf[
             (points_with_vf[:, 3] >= 0)
             & (points_with_vf[:, 4] >= 0)
