@@ -143,9 +143,9 @@ class VFSampling(Dataset):
             mesh_vertices=source_mesh.vertices
         )
         point_samples = self.sample_points(source_mesh=source_mesh)
-        vf_udf = self.extract_vf_udf(source_mesh=source_mesh, points=point_samples)
+        vf = self.extract_vf(source_mesh=source_mesh, points=point_samples)
 
-        points_with_vf = np.concatenate((point_samples, vf_udf), axis=1)
+        points_with_vf = np.concatenate((point_samples, vf), axis=1)
 
         self.group_points_by_vf_and_save(
             points_with_vf=points_with_vf, out_file=target_path
@@ -198,14 +198,13 @@ class VFSampling(Dataset):
 
         return np.concatenate((sphere_samples, perturbed_surface_samples), axis=0)
 
-    def extract_vf_udf(self, source_mesh, points):
-        surface_dist, _, closest_points = igl.signed_distance(
+    def extract_vf(self, source_mesh, points):
+        _, _, closest_points = igl.signed_distance(
             points, source_mesh.vertices, source_mesh.faces
         )
         vf = normalize(closest_points - points, axis=1)
-        udf = surface_dist
 
-        return np.concatenate((vf, np.expand_dims(udf, axis=1)), axis=1)
+        return vf
 
     def group_points_by_vf_and_save(self, points_with_vf, out_file):
         first_set = points_with_vf[
