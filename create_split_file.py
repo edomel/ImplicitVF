@@ -10,7 +10,25 @@ import random
 
 
 shape_to_class = {
+    "planes": "02691156",
+    "benches": "02828884",
+    "bookshelf": "02871439",
+    "busses": "02924116",
+    "cabinets": "02933112",
+    "cars": "02958343",
+    "chairs": "03001627",
+    "clocks": "03046257",
+    "display": "03211117",
+    "filecabinets": "03337140",
+    "guitars": "03467517",
     "lamps": "03636649",
+    "laptops": "03642806",
+    "speakers": "03691459",
+    "sofas": "04256520",
+    "tables": "04379243",
+    "phones": "04401088",
+    "boats": "04530566",
+    "clothes": "08888888",
 }
 
 
@@ -53,8 +71,9 @@ def main():
     random.shuffle(data_list)
     num_shapes = len(data_list)
     num_train_shapes = int(num_shapes * 0.8)
+
     print(
-        "From {} files, use {} shapes for training and {} for evaliation".format(
+        "From {} files dataset, use {} shapes for training and {} for evaliation".format(
             num_shapes, num_train_shapes, num_shapes - num_train_shapes
         )
     )

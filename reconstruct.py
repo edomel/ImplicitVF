@@ -39,20 +39,6 @@ if __name__ == "__main__":
         + "or 'latest' for the latest weights (this is the default)",
     )
     arg_parser.add_argument(
-        "--data",
-        "-d",
-        dest="data_source",
-        required=True,
-        help="The data source directory.",
-    )
-    arg_parser.add_argument(
-        "--split",
-        "-s",
-        dest="split_filename",
-        required=True,
-        help="The split to reconstruct.",
-    )
-    arg_parser.add_argument(
         "--grid_size",
         default=256,
         type=int,
@@ -72,6 +58,8 @@ if __name__ == "__main__":
     specs = json.load(open(specs_filename))
 
     latent_size = specs["CodeLength"]
+    data_source = specs["DataSource"]
+    test_split_file = specs["TestSplit"]
 
     decoder = Decoder(
         latent_size,
@@ -92,10 +80,10 @@ if __name__ == "__main__":
     decoder.load_state_dict(saved_model_state["model_state_dict"])
     decoder = decoder.module.cuda()
 
-    with open(args.split_filename, "r") as f:
+    with open(test_split_file, "r") as f:
         split = json.load(f)
 
-    npz_filenames = implicit_vf.data.get_instance_filenames(args.data_source, split)
+    npz_filenames = implicit_vf.data.get_instance_filenames(data_source, split)
     print("Number of files to be used:", len(npz_filenames))
 
     logging.debug(decoder)
