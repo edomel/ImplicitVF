@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     implicit_vf.configure_logging(args)
 
-    subdir = ws.sdf_samples_subdir
+    subdir = ws.vf_samples_subdir
     extension = ".npz"
     executable = VFSampling(
         args=args,

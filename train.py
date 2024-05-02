@@ -401,7 +401,7 @@ def main_function(
         for vf_data, indices in vf_loader:
             # Process the input data
             vf_data = vf_data.reshape(-1, 6)
-            num_sdf_samples = vf_data.shape[0]
+            num_vf_samples = vf_data.shape[0]
 
             vf_data.requires_grad = False
 
@@ -415,17 +415,16 @@ def main_function(
             batch_vecs = lat_vecs(indices)
             input = torch.cat([batch_vecs, xyz], dim=1)
 
-            # TODO: Clean from here
             # NN optimization
             pred = decoder(input)
 
-            vf_loss = loss_l2(pred, vf_gt) / num_sdf_samples
+            vf_loss = loss_l2(pred, vf_gt) / num_vf_samples
 
             if do_code_regularization:
                 l2_size_loss = torch.sum(torch.norm(batch_vecs, dim=1))
                 reg_loss = (
                     code_reg_lambda * min(1, epoch / 100) * l2_size_loss
-                ) / num_sdf_samples
+                ) / num_vf_samples
 
                 vf_loss = vf_loss + reg_loss.cuda()
 

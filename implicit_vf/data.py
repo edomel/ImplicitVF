@@ -72,6 +72,42 @@ def unpack_open_vf_samples(filename, subsample=None):
     return samples
 
 
+def read_open_vf_samples_into_ram(filename):
+    npz = np.load(filename)
+
+    first_set = torch.from_numpy(npz["first"])
+    second_set = torch.from_numpy(npz["second"])
+    third_set = torch.from_numpy(npz["third"])
+    fourth_set = torch.from_numpy(npz["fourth"])
+    fifth_set = torch.from_numpy(npz["fifth"])
+    sixth_set = torch.from_numpy(npz["sixth"])
+    seventh_set = torch.from_numpy(npz["seventh"])
+    eighth_set = torch.from_numpy(npz["eighth"])
+
+    return [
+        first_set,
+        second_set,
+        third_set,
+        fourth_set,
+        fifth_set,
+        sixth_set,
+        seventh_set,
+        eighth_set,
+    ]
+
+
+def unpack_open_vf_samples_from_ram(data, subsample=None):
+    if subsample is None:
+        return data
+
+    data_tensor = torch.cat(data, 0)
+    data_tensor = remove_nans(data_tensor)
+    data_size = data_tensor.shape[0]
+    start_ind = random.randint(0, data_size - subsample)
+    sample_data = data_tensor[start_ind : (start_ind + subsample)]
+    return sample_data.type(torch.FloatTensor)
+
+
 def get_instance_filenames(data_source, split):
     npzfiles = []
     for dataset in split:
@@ -81,7 +117,7 @@ def get_instance_filenames(data_source, split):
                     dataset, class_name, instance_name + ".npz"
                 )
                 if not os.path.isfile(
-                    os.path.join(data_source, ws.sdf_samples_subdir, instance_filename)
+                    os.path.join(data_source, ws.vf_samples_subdir, instance_filename)
                 ):
                     logging.warning(
                         "Requested non-existent file '{}'".format(instance_filename)
@@ -115,7 +151,7 @@ class OpenVFSamples(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         filename = os.path.join(
-            self.data_source, ws.sdf_samples_subdir, self.npyfiles[idx]
+            self.data_source, ws.vf_samples_subdir, self.npyfiles[idx]
         )
         return (
             unpack_open_vf_samples(filename, self.subsample),
